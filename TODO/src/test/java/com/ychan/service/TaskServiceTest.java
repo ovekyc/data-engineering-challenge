@@ -4,9 +4,12 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.jersey.api.client.ClientResponse;
@@ -34,9 +37,9 @@ public class TaskServiceTest extends BaseServiceTest{
 //    DBManager db = DBManager.getInstance();
 //    db.flushAll();
 //    db.put(mockTodo.getId(), mockTodo);
-//    Arrays.stream(expected).forEach(todo -> {
+//    Arrays.stream(expected).forEach(task -> {
 //      try {
-//        db.put(todo.id, todo);
+//        db.put(task.id, task);
 //      } catch (JsonProcessingException e) {
 //        e.printStackTrace();
 //        fail();
@@ -75,6 +78,31 @@ public class TaskServiceTest extends BaseServiceTest{
     assertEquals(expected.description, responsed.description);
     assertEquals(expected.status, responsed.status);
     assertEquals(expected.created, responsed.created);
+  }
+
+  @Test
+  public void testGetDone() throws IOException {
+    final String addr = MessageFormat.format("{0}/{1}/{2}/{3}", "todos", mockTodo.getId(), "tasks", "done");
+    Task[] tasks = { mockTaskWorking, mockTodoMeeting };
+    Task expected = mockTodoMeeting;
+    
+    DBManager db = DBManager.getInstance();
+    db.flushAll();
+    db.put(mockTodo.getId(), mockTodo);
+    Arrays.stream(tasks).forEach(task -> {
+      try {
+        db.put(task.id, task);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+        fail();
+      }
+    });
+    
+    final ClientResponse res = sendRequest(addr, "GET");
+    final String json = res.getEntity(String.class);
+    Task[] responsed = mapper.readValue(json, Task[].class);
+    assertEquals(200, res.getStatus());
+    assertEquals(expected.name, responsed[0].name);
   }
 
   @Test

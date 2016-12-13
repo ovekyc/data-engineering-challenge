@@ -23,7 +23,6 @@ public class TodoServiceTest extends BaseServiceTest{
   final Todo mockTodoToday = new Todo("today");
   final Todo mockTodoTomorrow = new Todo("tomorrow");
 
-  @Test
   public void testGetAll() throws JsonParseException, JsonMappingException, IOException {
     Todo[] expected = { mockTodoToday, mockTodoTomorrow };
     Arrays.sort(expected, (Object a, Object b) -> {
@@ -77,7 +76,6 @@ public class TodoServiceTest extends BaseServiceTest{
 //    assertEquals(expected.name, responsed.name);
 //    assertEquals(expected.created, responsed.created);
 //  }
-  @Test
   public void testGetById() throws IOException {
     final Todo mockTodo = new Todo("todo");
     final Task mockTaskWorking =
@@ -116,7 +114,6 @@ public class TodoServiceTest extends BaseServiceTest{
     }
   }
 
-  @Test
   public void testPost() throws JsonParseException, JsonMappingException, IOException, NotExistException {
     final String mockName = "test";
     final ObjectNode mockData = mapper.createObjectNode();
